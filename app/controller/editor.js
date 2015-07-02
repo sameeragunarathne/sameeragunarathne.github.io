@@ -1,5 +1,7 @@
 var url;
 
+
+
 function readURL(input) {
 
     var img_loader = document.getElementById('img_loader');
@@ -13,6 +15,7 @@ function readURL(input) {
                 .width(350)
                 .height(350);
         }
+        console.log(input.files[0]);
         reader.readAsDataURL(input.files[0]);
     }
 
