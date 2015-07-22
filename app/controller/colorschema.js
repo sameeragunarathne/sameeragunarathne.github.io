@@ -21,9 +21,9 @@ window.onload = function () {
             imageArr[i][j] = false;
         }
     }
-}
+};
 
-window.addEventListener('load', function (ev) {
+window.addEventListener('load', function () {
     rowCount = 0;
 }, false);
 
@@ -46,10 +46,9 @@ $('#addBtn').colpick({
         sArr[rowCount] = rgb.g;
         lArr[rowCount] = rgb.b;
         addButtonClick(hex);
-        var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
 
     }
-})
+});
 
 $('#picker1').colpick({
     flat: true,
@@ -66,7 +65,7 @@ $('.color-box').colpick({
         $(el).css('background', '#' + hex);
         $(el).colpickHide();
     }
-})
+});
 
 //deleting a single pixel selected
 function pixelDel() {
@@ -137,12 +136,10 @@ function getColourValues() {
 
     var pixelWidth = canvas.width / 100;
     var pixelHeight = canvas.height / 100;
-
     var height = canvas.height;
     var width = canvas.width;
 
     var count = 0;
-
     //colour mapping logic for roundup the image colour values with available yarn colours.
     for (var i = pixelHeight / 2; i < height; i += pixelHeight) {
         for (var j = pixelWidth / 2; j < width; j += pixelWidth) {
