@@ -1,15 +1,5 @@
-var arr = [];
-var sArr = [];
-var lArr = [];
-var rArr = [];
-var rdArr = [];
-var gArr = [];
-var bArr = [];
-var imageDataArr = [];
-var imageArr = [];
-var list;
-
-var rowCount;
+var arr = [],sArr = [],lArr = [],rArr = [],rdArr = [],gArr = [],bArr = [],imageDataArr = [],imageArr = [];
+var list,rowCount;
 var isFreeHand = false;
 
 window.onload = function () {

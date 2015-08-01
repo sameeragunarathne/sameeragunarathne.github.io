@@ -57,6 +57,7 @@ function rotate(degrees) {
     checkBox = document.getElementById('cropCheck');
 
     if(!checkBox.checked){
+
         var dataUrl = canvas.toDataURL();
         image = document.getElementById('test');
         image.src = dataUrl;
