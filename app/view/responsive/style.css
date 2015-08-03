@@ -64,7 +64,6 @@
 
 .canvas {
     border:1px solid grey;
-    margin-left: 10px;
     float: left;
 }
 
@@ -80,4 +79,19 @@
 
 #canvas,#layoutCanvas,#gridCanvas{
     position: absolute;
+}
+
+@media (max-width: 1200px) {
+
+    #container{
+        position: relative;
+        float: left;
+        width:100%;
+        height:auto;
+    }
+
+    .canvas {
+        width: 100%;
+        height: auto;
+    }
 }
