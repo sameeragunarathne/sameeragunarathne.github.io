@@ -3,13 +3,15 @@ var startPixelX, startPixelY, endPixelX, endPixelY, pixelWidth, pixelHeight, pre
 var temp, testX, testY;
 var imgAvgData = [];
 var collection = [];
-var isRegionized = false,colourPickerEnabled = false;
+var isRegionized = false,colourPickerEnabled = false,isAllArea=false;
 var cellWidth,cellHeight;
 
 var gridCanvas = document.getElementById("gridCanvas");
 var gridCtx = gridCanvas.getContext("2d");
 var bufferCanvas = document.getElementById("canvas2");
 var bufferCtx = bufferCanvas.getContext("2d");
+
+
 
 //getting canvas position for select tool
 layoutCanvas.onmousedown = function (e) {
@@ -25,7 +27,7 @@ layoutCanvas.onmousedown = function (e) {
     //console.log(startX+" and "+startY);
     if (!isRegionized)
     //gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
-        cellWidth = pixelCanvas.width/numOfColumns;
+    cellWidth = pixelCanvas.width/numOfColumns;
     cellHeight = pixelCanvas.height/numOfRows;
     prevPixelX = Math.floor(startX / cellWidth) * cellWidth;
     prevPixelY = Math.floor(startY / cellHeight) * cellHeight;
@@ -109,8 +111,13 @@ layoutCanvas.onmousedown = function (e) {
 };
 
 layoutCanvas.onclick = function () {
+
     if (isRegionized) {
-        console.log(numOfRows *Math.floor(startPixelY / cellWidth)+" "+Math.floor(startPixelX / cellHeight)+" "+(startPixelX));
+
+        if(isAllArea) {
+            console.log(startPixelX+" and "+startPixelY);
+        }
+        console.log(numOfRows *Math.floor(startPixelY / cellWidth)+" "+Math.floor(startPixelX / cellHeight)+" "+(startPixelX / cellHeight));
         console.log(numOfRows *Math.floor(startPixelY / cellWidth) + Math.floor(startPixelX / cellHeight));
         var colourVal = imgAvgData[numOfRows * Math.floor(startPixelY / cellWidth) + Math.floor(startPixelX / cellHeight)];
         //console.log(100 * startPixelY / 10 + startPixelX / 10);
@@ -134,7 +141,7 @@ layoutCanvas.onclick = function () {
 function colourChange() {
     colourPickerEnabled=!colourPickerEnabled;
     var style = document.getElementsByClassName('colpick_new_color')[0].style.backgroundColor;
-
+// getColorBounds();
     if (isFreeHand) {
         pixelCtx.beginPath();
         for (var i = 0; i < list.length; i++) {
@@ -151,6 +158,8 @@ function colourChange() {
         for (var i = 0; i < pixelCanvas.width; i += cellWidth) {
             for (var j = 0; j < pixelCanvas.height; j += cellHeight) {
                 pixelCtx.strokeStyle = "0,0,0,255";
+                //pixelCtx.lineWidth = 0.01;
+                //pixelCtx.strokeRect(i, j, cellWidth, cellHeight);
             }
         }
     }
@@ -166,6 +175,8 @@ function colourChange() {
             if (imageArr[i][j]) {
                 pixelCtx.clearRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                 pixelCtx.fillStyle = style;
+                //pixelCtx.lineWidth = 0.2;
+                //pixelCtx.strokeRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                 pixelCtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
             }
         }
@@ -188,16 +199,24 @@ function getColorBounds() {
 var flag = false;
 var tempColourArr = [];
 
-
-function callFlood(){
+function callFlood(check){
 
     //getColorBounds();
     var colourList = [];
     collection = [];
-    var startGridPosX = startPixelX / cellWidth;
-    var startGridPosY = startPixelY / cellHeight;
-    var endGridPosX = (startPixelX + pixelWidth) / cellWidth;
-    var endGridPosY = (startPixelY + pixelHeight) / cellHeight;
+    var startGridPosX, startGridPosY, endGridPosX, endGridPosY;
+
+    if(check){
+        startGridPosX = Math.round(startPixelX / cellWidth);
+        startGridPosY = Math.round(startPixelY / cellHeight);
+        endGridPosX = Math.round((startPixelX + pixelWidth) / cellWidth);
+        endGridPosY = Math.round((startPixelY + pixelHeight) / cellHeight);
+    }else {
+        startGridPosX = 0;
+        startGridPosY = 0;
+        endGridPosX = numOfColumns;
+        endGridPosY = numOfRows;
+    }
     var mark=[],dupImgDataArr;
 
     for (var i = 0; i < numOfRows; i++) {
@@ -210,6 +229,9 @@ function callFlood(){
     }
 
     dupImgDataArr = imgAvgData.slice();
+
+    console.log(startGridPosY+" and "+endGridPosY+" and "+startGridPosX+" and "+endGridPosX);
+
     for (var i = startGridPosY; i < endGridPosY; i++) {
         for (var j = startGridPosX; j < endGridPosX; j++) {
             var tempVal = dupImgDataArr[numOfRows * i + j];
@@ -226,9 +248,11 @@ function callFlood(){
                     result+= tempColourArr[k]+" ";
                     copyArr[k+1] = tempColourArr[k];
                 }
+                console.log(result);
+                console.log("*******");
                 collection.push(copyArr);
             }
-            flag=false;
+            flag = false;
         }
     }
 
@@ -263,18 +287,18 @@ function callFlood(){
 
 }
 
-
-
 // function for checking for colour boundaries
-function checkBounds(check) {
+function checkBounds(check,region) {
+    console.log("got here");
     if (check.checked) {
 
         layoutCanvas.style.cursor = "crosshair";
         isRegionized = true;
+        isAllArea = !region;
         collection = [];
 
         getColorBounds();
-        callFlood();
+        callFlood(region);
         showColourBounds();
 
     } else if (!check.checked) {
@@ -308,15 +332,17 @@ function showColourBounds() {
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY));
                 layoutCtx.lineTo((tempArr[j] % numOfColumns) * pixelDistX+ pixelDistY ,
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY));
+                //console.log((tempArr[j] % numOfColumns) * cellWidth+","+Math.floor(tempArr[j] / numOfRows * cellHeight)+" to "+Math.floor((tempArr[j] % numOfColumns) * cellWidth) + cellWidth+","+Math.floor(tempArr[j] / numOfRows * cellHeight));
             }
 
             check = $.inArray(tempArr[j] + 1, tempArr);
-
+            //console.log("i th pos: "+(tempArr[j] % numOfColumns)+ "j th pos: "+tempArr[j] / numOfRows * cellHeight);
             if (check == -1) {
                 layoutCtx.moveTo((tempArr[j] % numOfColumns) * pixelDistX+ pixelDistX ,
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY));
                 layoutCtx.lineTo((tempArr[j] % numOfColumns) * pixelDistX+ pixelDistX ,
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY+ pixelDistY));
+                //console.log(Math.floor((tempArr[j] % numOfColumns) * cellWidth) + cellWidth+","+ Math.floor(tempArr[j] / numOfRows * cellHeight)+" to "+Math.floor((tempArr[j] % numOfColumns) * cellWidth) + cellWidth+","+ Math.floor(tempArr[j] / numOfRows * cellHeight) + cellHeight);
             }
 
             check = $.inArray(tempArr[j] + parseInt(numOfColumns), tempArr);
@@ -325,6 +351,7 @@ function showColourBounds() {
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY + pixelDistY));
                 layoutCtx.lineTo((tempArr[j] % numOfColumns) * pixelDistX,
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY + pixelDistY));
+                //console.log(Math.floor((tempArr[j] % numOfColumns) * cellWidth) + cellWidth+","+Math.floor(tempArr[j] / numOfRows * cellHeight) + cellHeight+" to "+Math.floor((tempArr[j] % numOfColumns) * cellWidth)+","+ Math.floor(tempArr[j] / numOfRows * cellHeight) + cellHeight);
             }
 
             check = $.inArray(tempArr[j] - 1, tempArr);
@@ -333,12 +360,14 @@ function showColourBounds() {
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY));
                 layoutCtx.lineTo((tempArr[j] % numOfColumns) * pixelDistX,
                     Math.floor(parseInt(tempArr[j] / numOfRows) * pixelDistY + pixelDistY));
+                //console.log(Math.floor((tempArr[j] % numOfColumns) * cellWidth)+","+Math.floor(tempArr[j] / numOfRows * cellHeight)+" to "+Math.floor((tempArr[j] % numOfColumns) * cellWidth)+","+Math.floor(tempArr[j] / numOfRows * cellHeight) + cellHeight);
             }
             layoutCtx.strokeStyle = "rgba(0,0,0,255)";
             layoutCtx.stroke();
 
             isRegionized = true;
         }
+        //console.log(result);
     }
 }
 
