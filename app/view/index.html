@@ -44,6 +44,7 @@
                             <li><a href="#" onclick="setLang('en')" data-l10n-id="menu_translate_english">English</a></li>
                             <li><a href="#" onclick="setLang('ge')" data-l10n-id="menu_translate_german">German</a></li>
                             <li><a href="#" onclick="setLang('si')" data-l10n-id="menu_translate_sinhala">Sinhala</a></li>
+							<li><a href="#" onclick="setLang('ta')" data-l10n-id="menu_translate_tamil">Tamil</a></li>
                         </ul>
                     </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" data-l10n-id="menu_help">Help<span class="caret"></span></a>
@@ -177,6 +178,25 @@
                                 </div>
                             </div>
                         </div>
+
+                            <div class="panel">
+                                <div class="input-group">
+                                    <div class="text-input-group">
+                                        <label data-l10n-id="input_columns">host:&nbsp;</label>
+                                        <input id="host_addr" class="input-params" type="text" placeholder="127.0.0.1[default]">
+
+                                        <div class="clear"></div>
+                                    </div>
+
+                                    <div class="text-input-group">
+                                        <label data-l10n-id="input_rows">port:&nbsp;</label>
+                                        <input id="port" class="input-params" type="text" placeholder="80[default]">
+
+                                        <div class="clear"></div>
+                                    </div>
+                                </div>
+
+                            </div>
 
                         <div class="panel">
                             <div class="input-group">
@@ -397,6 +417,9 @@
 <script type="text/javascript" src="../controller/knitSimulatorHandler.js"></script>
 <script type="text/javascript" src="../controller/navbarhandler.js"></script>
 <script type="text/javascript" src="js/style.js"></script>
+
+<!-- set language javascript for global translations -->
+<script src="js/set_lang.js"></script>
 </body>
 </html>
 
